@@ -1,0 +1,32 @@
+<div class="container mainBody">
+    <div class="container">
+        <h3 small>{{itemdetails.item.name}}</h3>
+        <div class="postedBy">Posted <i>by</i> {{itemdetails.getUserById(itemdetails.item.owner).profile.firstName}}</div>
+        <br/>
+        <div class="row">
+            <div class="col-md-7">
+                <div class="itemDetail">
+                    <div class="itemDetailRow"><strong>Description:</strong> {{itemdetails.item.description}}</div>
+                    <div class="itemDetailRow"><strong>Posted:</strong> {{itemdetails.item.postedDate | amCalendar}}</div>
+                    <div class="itemDetailRow" ng-switch on="{{itemdetails.isExpired(itemdetails.item).toString()}}">
+                        <div ng-switch-when="false">
+                            <strong>Pick up dates:</strong> {{itemdetails.item.pickup.fromDate | amDateFormat:'MMM Do,YYYY'}}
+                            to {{itemdetails.item.pickup.toDate | amDateFormat:'MMM Do,YYYY'}}
+                            <br/>
+                            <strong>Timing:</strong> {{itemdetails.item.pickup.fromDate | amDateFormat:'hh:mm a'}}
+                            to {{itemdetails.item.pickup.toDate | amDateFormat:'hh:mm a'}}
+                        </div>
+                        <div ng-switch-default>
+                            <strong>Expired</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="itemDetailimageContainer">
+                    <div ng-style="{{itemdetails.getMainImage(itemdetails.item.images)}}" class="imageListThumbnail"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

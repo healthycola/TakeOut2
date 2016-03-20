@@ -1,0 +1,58 @@
+<script src="js/incrementInput.js"></script>
+<div class="container mainBody">
+    <div class="col-sm-10 col-md-offset-1">
+        <h2>Add Item</h2>
+        <hr>
+        <div class="col-sm-12">
+            <form class="form-horizontal" id="additem" name="addItemForm">
+                <div class="form-group">
+                    <label for="name" class="control-label">Name</label>
+                    <input type="text" class="form-control" name="name" placeholder="Item Name" required ng-model="addnewitem.newItem.name">
+                </div>
+                <div class="form-group">
+                    <label for="description" class="control-label">Description</label>
+                    <input type="text" class="form-control" name="description" placeholder="Description" required ng-model="addnewitem.newItem.description">
+                </div>
+                <div class="form-group">
+                    <label for="age" class="control-label">Age</label>
+                    <div class="input-group">
+                        <div class="input-group spinner" id="ageDays">
+                            <input type="text" class="form-control" value="0" ng-model="addnewitem.newItem.ageDays">
+                            <div class="input-group-btn-vertical">
+                                <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
+                                <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
+                            </div>
+                        </div>
+                        <span class="input-group-addon">days</span>
+                        <div class="input-group spinner" id="ageHours">
+                            <input type="text" class="form-control" value="0" ng-model="addnewitem.newItem.ageHours">
+                            <div class="input-group-btn-vertical">
+                                <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
+                                <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
+                            </div>
+                        </div>
+                        <span class="input-group-addon">hours</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="age" class="control-label">Add Images</label>
+                    <!--<div class="btn" ngf-select ng-model="file" name="file" ngf-pattern="'image/*'" ngf-accept="'image/*'" ngf-max-size="20">Select</div>-->
+                    <input class="btn" type="file" ngf-select ng-model="picFile" name="file" accept="image/*" ngf-max-size="20MB" required ngf-model-invalid="errorFiles">
+                     <img ng-show="addItemForm.file.$valid" ngf-thumbnail="picFile" class="thumb"><br>
+                     <button ng-click="picFile = null" ng-show="picFile" class="btn">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label for="scheduling" class="control-label">Pickup Time</label>
+                    <div>
+                        <span>Between {{myDatetimeRange.date.from | amDateFormat:'dddd, MMMM Do YYYY'}} at {{myDatetimeRange.time.from | rgTime}} to {{myDatetimeRange.date.to | amDateFormat:'dddd, MMMM Do YYYY'}} at {{myDatetimeRange.time.to | rgTime}}</span>
+                    </div>
+                    <button type="button" class="btn btn-default" ng-click="isCollapsed = !isCollapsed">Modify pickup times</button>
+                    <div labels="myDatetimeLabels" rg-range-picker="myDatetimeRange" uib-collapse="isCollapsed"></div>
+                </div>
+                <div class="form-group">
+                    <button id="addItemSubmitButton" type="submit" class="btn" ng-click="addnewitem.addItem($files)" ng-disabled="addItemForm.$invalid">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

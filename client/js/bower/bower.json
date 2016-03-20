@@ -1,0 +1,15 @@
+{
+  "name": "Takeout",
+  "version": "0.0.1",
+  "dependencies": {
+    "datetimeRangePicker": "latest",
+    "angular-bootstrap": "latest"
+  },
+  "ignoredDependencies": [
+    "angular"
+  ],
+  "private": true,
+  "resolutions": {
+    "angular": ">=1.4.0"
+  }
+}

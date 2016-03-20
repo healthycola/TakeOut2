@@ -1,0 +1,100 @@
+<div class="container mainBody">
+    <div class="container">
+        <div class="row" ng-show="$auth.currentUser">
+            <h2>You're already logged in!</h2>    
+        </div>
+        <div class="row" ng-hide="$auth.currentUser">
+            <div class="col-md-8">
+                <h2>Sign Up</h2>
+                <hr>
+                <div class="col-md-8 col-md-offset-2">
+                    <form class="form-horizontal" role="form" id="signup-form">
+                        <div class="form-group">
+                            <label for="signup-Email" class="control-label required">Email</label>
+                            <input type="email" class="form-control" ng-model="signup.newUser.signupEmail">
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password" class="control-label required">Password</label>
+                            <input type="password" class="form-control" ng-model="signup.newUser.signuppassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-FirstName" class="control-label required">First Name</label>
+                            <input type="text" class="form-control" ng-model="signup.newUser.signupFirstName">
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-LastName" class="control-label required">Last Name</label>
+                            <input type="text" class="form-control" ng-model="signup.newUser.signupLastName">
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-accountType" class="control-label required">Account Type</label>
+                            <select class="form-control" ng-model="signup.newUser.accountType">
+                                <option value="Restaurant - Donor">Restaurant - Donor</option>
+                                <option value="Grocery Store - Donor">Grocery Store - Donor</option>
+                                <option value="Individual - Donor">Individual - Donor</option>
+                                <option value="Individual - Consumer">Individual - Consumer</option>
+                                <option value="Pickup Service - Consumer">Pickup Service - Consumer</option>
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"> I agree with the <a data-toggle="modal" href="#tcModal">Terms and Conditions</a>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button ng-click="signup.addUser()" class="btn">Sign up</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h2>Already A User?</h2>
+                <hr>
+                <div class="col-md-12">
+                    <div class="col-md-12">
+                        <form class="form-horizontal" role="form" id="signin-form">
+                            <div class="form-group">
+                                <label for="signin-Email" class="control-label required">Email</label>
+                                <input type="email" class="form-control" ng-model="signup.userDetails.signinEmail">
+                            </div>
+                            <div class="form-group">
+                                <label for="signin-password" class="control-label required">Password</label>
+                                <input type="password" class="form-control" ng-model="signup.userDetails.signinpassword">
+                            </div>
+                            <div class="form-group">
+                                <button ng-click="signup.signIn()" class="btn">Sign in</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="$auth.loggingIn">Logging in...</div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="tcModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Terms and Conditions</h4>
+                </div>
+                <div class="modal-body">
+                    Blah blah. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam sit amet vulputate. Quisque
+                    mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis dolor, in
+                    sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan. Aliquam in
+                    felis sit amet augue.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">I Agree</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+</div>
