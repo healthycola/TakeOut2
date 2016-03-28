@@ -312,3 +312,10 @@ label {
     padding: 10px;
     color: #fff;
 }
+
+.messageMeta
+{
+    font-size: 6pt;
+    text-transform: uppercase;
+    color: #888;
+}
