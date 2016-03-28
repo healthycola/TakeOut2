@@ -83,6 +83,7 @@ angular.module('takeout').directive('signup', function () {
                     }
                     else {
                         console.log("SUCCESS" + this.newUser);
+                        $state.go('home');
                     }
 
                     return false;
@@ -129,31 +130,28 @@ var IsExpired = (item) => {
 var PickupFromDate = (item) => {
     var currentDate = new Date();
     var newDateOffset = 0;
-    if (currentDate.getHours() * 60 + currentDate.getMinutes() > item.pickup.time.to)
-    {
+    if (currentDate.getHours() * 60 + currentDate.getMinutes() > item.pickup.time.to) {
         newDateOffset = 1;
     }
-    
-    var pickupFrom = new Date(item.pickup.date.from.getFullYear(), 
-        item.pickup.date.from.getMonth(), 
-        item.pickup.date.from.getDate() + newDateOffset, 
-        0, 
+
+    var pickupFrom = new Date(item.pickup.date.from.getFullYear(),
+        item.pickup.date.from.getMonth(),
+        item.pickup.date.from.getDate() + newDateOffset,
+        0,
         item.pickup.time.from);
-        
+
     var output = {};
-    if (pickupFrom > currentDate)
-    {
+    if (pickupFrom > currentDate) {
         output = pickupFrom;
     }
-    else
-    {
-        output = new Date(currentDate.getFullYear(), 
-            currentDate.getMonth(), 
+    else {
+        output = new Date(currentDate.getFullYear(),
+            currentDate.getMonth(),
             currentDate.getDate() + newDateOffset,
             0,
             item.pickup.time.from);
     }
-    
+
     return output;
 }
 
@@ -180,7 +178,7 @@ angular.module('takeout').directive('profile', function () {
                     return Items.find({ owner: Meteor.user()._id });
                 }
             });
-            
+
             this.isExpired = (item) => {
                 return IsExpired(item);
             };
@@ -231,8 +229,10 @@ angular.module('takeout').directive('addnewitem', function () {
                 this.newItem.pickup = {};
                 this.newItem.pickup.fromDate = new Date($scope.myDatetimeRange.date.from.getFullYear(), $scope.myDatetimeRange.date.from.getMonth(), $scope.myDatetimeRange.date.from.getDate(), 0, $scope.myDatetimeRange.time.from);
                 this.newItem.pickup.toDate = new Date($scope.myDatetimeRange.date.to.getFullYear(), $scope.myDatetimeRange.date.to.getMonth(), $scope.myDatetimeRange.date.to.getDate(), 0, $scope.myDatetimeRange.time.to);
+                this.newItem.threads = [];
+                
+                //TODO: add error case callback
                 Items.insert(this.newItem);
-                console.log(this.newItem);
                 $state.go('itemslist');
                 this.newItem = { "name": "", "description": "", "ageDays": 0, "ageHours": 0, "images": [] };
             }
@@ -308,12 +308,34 @@ angular.module('takeout').directive('itemdetails', function () {
             $reactive(this).attach($scope);
 
             this.itemId = $stateParams.itemId;
+            this.user = Meteor.user()._id;
             this.helpers({
                 item: () => {
                     return Items.findOne({ _id: this.itemId });
                 },
                 images: () => {
                     return Images.find({});
+                },
+                thread: () => {
+                    var item = Items.findOne({ _id: this.itemId });
+                    if (!item || !item.threads)
+                    {
+                        return null;
+                    }
+                    
+                    return Threads.findOne({ _id: { $in: item.threads }, ownerId: item.owner, user: this.getReactively('user') });
+                },
+                user: () => {
+                    return this.user;
+                },
+                getAllThreads: () => {
+                    var item = Items.findOne({ _id: this.itemId });
+                    if (!item || !item.threads || item.owner != Meteor.user()._id)
+                    {
+                        return null;
+                    }
+                    
+                    return Threads.find({ _id: { $in: item.threads } });
                 }
             });
 
@@ -335,6 +357,70 @@ angular.module('takeout').directive('itemdetails', function () {
             this.isExpired = (item) => {
                 return IsExpired(item);
             };
+
+            this.msgToAdd = { "message": "", "author": "", "timestamp": new Date(), "isRead": false };
+            this.addToThread = (item) => {
+                var addMessageToThread = function (item, message, user) {
+                    console.log(item);
+                    console.log(message);
+                    var thread = Threads.findOne({ _id: { $in: item.threads }, ownerId: item.owner, user: user });
+                    console.log(thread);
+                    var isThreadFound = true;
+                    if (!thread) {
+                        isThreadFound = false;
+                        // create a thread
+                        var newThred = {};
+                        newThred.ownerId = item.owner;
+                        newThred.user = user;
+                        newThred.messages = [];
+                        newThred.isOpen = true;
+                        thread = newThred;
+                    }
+                    console.log(thread);
+                    message.author = Meteor.user()._id;
+                    message.timestamp = new Date();
+                    message.isRead = false;
+
+                    if (!isThreadFound) {
+                        console.log("istf" + isThreadFound);
+                        thread.messages.push(message);
+                        Threads.insert(thread, function (err, addedThread) {
+                            if (err) {
+                                //handle    
+                                console.log(err);
+                            }
+                            console.log(addedThread);
+                            Items.update({ _id: item._id }, { $push: { "threads": addedThread } }, function (err, updateDocs) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                console.log(updateDocs);
+                                console.log("done");
+                            });
+                        });
+                    }
+                    else {
+                        Threads.update({ _id: thread._id }, { $push: { "messages": message } });
+                    }
+                }
+                
+                // Look if there is already a thread between this user and the onwer for this item
+                console.log(this.msgToAdd);
+                if (!item.threads) {
+                    Items.update({ _id: this.itemId }, { $set: { threads: [] } }, function (err) {
+                        if (err) {
+                            //handle
+                        }
+
+                        addMessageToThread(item, this.msgToAdd, this.user);
+                        this.msgToAdd = { "message": "" };
+                    });
+                }
+                else {
+                    addMessageToThread(item, this.msgToAdd, this.user);
+                    this.msgToAdd = { "message": "" };
+                }
+            }
         }
     }
 });

@@ -13,8 +13,8 @@
                             <strong>Pick up dates:</strong> {{itemdetails.item.pickup.fromDate | amDateFormat:'MMM Do,YYYY'}}
                             to {{itemdetails.item.pickup.toDate | amDateFormat:'MMM Do,YYYY'}}
                             <br/>
-                            <strong>Timing:</strong> {{itemdetails.item.pickup.fromDate | amDateFormat:'hh:mm a'}}
-                            to {{itemdetails.item.pickup.toDate | amDateFormat:'hh:mm a'}}
+                            <strong>Timing:</strong> {{itemdetails.item.pickup.fromDate | amDateFormat:'hh:mm a'}} to {{itemdetails.item.pickup.toDate
+                            | amDateFormat:'hh:mm a'}}
                         </div>
                         <div ng-switch-default>
                             <strong>Expired</strong>
@@ -25,6 +25,50 @@
             <div class="col-md-5">
                 <div class="itemDetailimageContainer">
                     <div ng-style="{{itemdetails.getMainImage(itemdetails.item.images)}}" class="imageListThumbnail"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div ng-show="itemdetails.item.threads != null">
+                        <div ng-show="itemdetails.item.owner == currentUser._id">
+                            <div class="row">
+                                <div class="col-md-2">Requests</div>
+                                <div class="col-md-10">
+                                    <select class="form-control" ng-model="itemdetails.user">
+                                        <option ng-repeat="thread in itemdetails.getAllThreads" value="{{thread.user}}">{{itemdetails.getUserById(thread.user).profile.firstName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <br/>
+                        </div>
+                        <div ng-repeat="messageObject in itemdetails.thread.messages">
+                            <div class="row">
+                                <div ng-class="messageObject.author == currentUser._id ? 'myMessage col-md-8' : 'theirMessage col-md-8 col-md-offset-4'">
+                                    {{messageObject.message}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-show="itemdetails.item.threads == null">
+                        No conversation here
+                    </div>
+                    <form class="form-horizontal" id="addMessage" name="addMessageToThread">
+                        <div class="row">
+                            <label for="message" class="control-label">Your Message</label>
+                        </div>
+                        <div clas="row">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="message" placeholder="Item Name " required ng-model="itemdetails.msgToAdd.message">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button id="addMessageSubmitButton" type="submit" class="btn" ng-click="itemdetails.addToThread(itemdetails.item)" ng-disabled="addMessageToThread.$invalid">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

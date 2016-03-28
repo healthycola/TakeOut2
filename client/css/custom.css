@@ -295,3 +295,20 @@ label {
     margin-right: 10px;
     padding: 10px;
 }
+
+.myMessage
+{
+    border: 1px solid #ccc;
+    background-color: #eee;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.theirMessage
+{
+    border: 1px solid #eee;
+    background-color: #3B3323;
+    margin-bottom: 10px;
+    padding: 10px;
+    color: #fff;
+}

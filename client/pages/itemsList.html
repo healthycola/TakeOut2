@@ -23,7 +23,7 @@
                     </td>
                     <td>{{item.description}}</td>
                     <td>{{item.pickup.fromDate | amDateFormat:'dddd, MMMM Do YYYY'}} to
-                        {{item.pickup.date.toDate | amDateFormat:'dddd, MMMM Do YYYY'}}</td>
+                        {{item.pickup.toDate | amDateFormat:'dddd, MMMM Do YYYY'}}</td>
                     <td>{{itemslist.getUserById(item.owner).profile.firstName}}</td>
                 </tr>
             </tbody>
