@@ -319,3 +319,8 @@ label {
     text-transform: uppercase;
     color: #888;
 }
+
+.badge {
+  background-color: #fed136;
+  color: #3B3323;
+}

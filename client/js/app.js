@@ -27,6 +27,15 @@ angular.module('takeout').directive('navbar', function () {
         controllerAs: 'navbar',
         controller: function ($scope, $reactive) {
             $reactive(this).attach($scope);
+            
+            this.helpers({
+                notifications: () => {
+                    return Threads.find({ $or: [ 
+                        { $and: [ { "readByUser" : false }, { user: Meteor.user()._id } ] }, 
+                        { $and: [ { "readByOwner": false }, { ownerId: Meteor.user()._id } ] } 
+                        ]}).count();
+                }
+            });
         }
     }
 });
@@ -38,6 +47,14 @@ angular.module('takeout').directive('navbar2', function () {
         controllerAs: 'navbar2',
         controller: function ($scope, $reactive) {
             $reactive(this).attach($scope);
+            this.helpers({
+                notifications: () => {
+                    return Threads.find({ $or: [ 
+                        { $and: [ { "readByUser" : false }, { user: Meteor.user()._id } ] }, 
+                        { $and: [ { "readByOwner": false }, { ownerId: Meteor.user()._id } ] } 
+                        ]}).count();
+                }
+            });
         }
     }
 });
@@ -176,6 +193,12 @@ angular.module('takeout').directive('profile', function () {
             this.helpers({
                 myItems: () => {
                     return Items.find({ owner: Meteor.user()._id });
+                },
+                notifications: () => {
+                    return Threads.find({ $or: [ 
+                        { $and: [ { "readByUser" : false }, { user: Meteor.user()._id } ] }, 
+                        { $and: [ { "readByOwner": false }, { ownerId: Meteor.user()._id } ] } 
+                        ]}).count();
                 }
             });
 
@@ -309,6 +332,7 @@ angular.module('takeout').directive('itemdetails', function () {
 
             this.itemId = $stateParams.itemId;
             this.user = Meteor.user()._id;
+            
             this.helpers({
                 item: () => {
                     return Items.findOne({ _id: this.itemId });
@@ -359,6 +383,17 @@ angular.module('takeout').directive('itemdetails', function () {
             };
 
             this.msgToAdd = { "message": "", "author": "", "timestamp": new Date(), "isRead": false };
+            
+            this.markAsRead = (item) => {
+                var thread = Threads.findOne({ _id: { $in: item.threads }, ownerId: item.owner, user: this.user });
+                console.log(thread);
+                if (thread) {
+                    var readByUser = thread.user == Meteor.user()._id ? true : thread.readByUser;
+                    var readByOwner = thread.ownerId == Meteor.user()._id ? true : thread.readByOwner;
+                    Threads.update({ _id: thread._id }, { $set: { "readByUser": readByUser, "readByOwner": readByOwner } });
+                }
+            }
+            
             this.addToThread = (item) => {
                 var addMessageToThread = function (item, message, user) {
                     console.log(item);
@@ -374,12 +409,13 @@ angular.module('takeout').directive('itemdetails', function () {
                         newThred.user = user;
                         newThred.messages = [];
                         newThred.isOpen = true;
+                        newThred.readByUser = true;
+                        newThred.readByOwner = false;
                         thread = newThred;
                     }
                     console.log(thread);
                     message.author = Meteor.user()._id;
                     message.timestamp = new Date();
-                    message.isRead = false;
 
                     if (!isThreadFound) {
                         console.log("istf" + isThreadFound);
@@ -400,7 +436,9 @@ angular.module('takeout').directive('itemdetails', function () {
                         });
                     }
                     else {
-                        Threads.update({ _id: thread._id }, { $push: { "messages": message } });
+                        var readByUser = item.owner != Meteor.user()._id;
+                        var readByOwner = item.owner == Meteor.user()._id;
+                        Threads.update({ _id: thread._id }, { $push: { "messages": message }, $set: { "readByUser": readByUser, "readByOwner": readByOwner } });
                     }
                 }
                 

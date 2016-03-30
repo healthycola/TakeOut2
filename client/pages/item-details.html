@@ -33,13 +33,20 @@
                         <div ng-show="itemdetails.item.owner == currentUser._id">
                             <div class="row">
                                 <div class="col-md-2">Requests</div>
-                                <div class="col-md-10">
+                                <div class="col-md-8">
                                     <select class="form-control" ng-model="itemdetails.user">
-                                        <option ng-repeat="thread in itemdetails.getAllThreads" value="{{thread.user}}">{{itemdetails.getUserById(thread.user).profile.firstName}}</option>
+                                        <option ng-repeat="thread in itemdetails.getAllThreads" value="{{thread.user}}">{{itemdetails.getUserById(thread.user).profile.firstName}} {{thread.readByOwner}}</option>
                                     </select>
                                 </div>
                             </div>
                             <br/>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1 col-md-offset-11">
+                                <div class="form-group">
+                                    <button id="markAsReadButton" type="button" class="btn" ng-click="itemdetails.markAsRead(itemdetails.item)" uib-tooltip="Mark as read"><i class="glyphicon glyphicon-ok-sign"></i></button>
+                                </div>
+                            </div>
                         </div>
                         <div ng-repeat="messageObject in itemdetails.thread.messages">
                             <div class="row">
@@ -61,12 +68,12 @@
                                 <label for="message" class="control-label">Your Message</label>
                             </div>
                             <div clas="row">
-                                <div class="col-md-11">
+                                <div class="col-md-10">
                                     <div class="form-group">
                                         <input type="text" class="form-control" name="message" placeholder="Item Name " required ng-model="itemdetails.msgToAdd.message">
                                     </div>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <button id="addMessageSubmitButton" type="submit" class="btn" ng-click="itemdetails.addToThread(itemdetails.item)" ng-disabled="addMessageToThread.$invalid">Send</button>
                                     </div>
