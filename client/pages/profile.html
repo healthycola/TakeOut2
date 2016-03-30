@@ -46,33 +46,40 @@
                 <div class="tab-content">
                     <div class="tab-pane active" id="home">
                         <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Posted</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="items">
-                                    <tr ng-repeat="item in profile.myItems">
-                                        <td>{{$index + 1}}</td>
-                                        <td>{{item.name}}</td>
-                                        <td><span am-time-ago="item.postedDate" am-without-suffix="false"></span></td>
-                                        <td ng-switch on="{{profile.isExpired(item).toString()}}">
-                                            <div ng-switch-when="false">
-                                                Available
-                                            </div>
-                                            <div ng-switch-default>
-                                                <em>Expired</em>
-                                            </div>
-                                        </td>
-                                        <td><a ui-sref="itemDetails({ itemId: item._id })">Update</a> Delete</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div ng-if="profile.myItems.length > 0">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Posted</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="items">
+                                        <tr ng-repeat="item in profile.myItems">
+                                            <td>{{$index + 1}}</td>
+                                            <td>{{item.name}}</td>
+                                            <td><span am-time-ago="item.postedDate" am-without-suffix="false"></span></td>
+                                            <td ng-switch on="{{profile.isExpired(item).toString()}}">
+                                                <div ng-switch-when="false">
+                                                    Available
+                                                </div>
+                                                <div ng-switch-default>
+                                                    <em>Expired</em>
+                                                </div>
+                                            </td>
+                                            <td><a ui-sref="itemDetails({ itemId: item._id })">Update</a> Delete</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div ng-if="profile.myItems.length == 0">
+                                <br/>
+                                <i>You have no active items</i>
+                            </div>
                             <hr>
                             <div class="row">
                                 <div class="col-md-4 col-md-offset-4 text-center">
@@ -84,11 +91,10 @@
 
                         <hr>
 
-                        <h4>Recent Activity</h4>
+                        <!--<h4>Recent Activity</h4>
 
                         <div class="table-responsive">
                             <table class="table table-hover">
-
                                 <tbody>
                                     <tr>
                                         <td><i class="pull-right fa fa-edit"></i> Today, 1:00 - Jeff Manzi liked your post.</td>
@@ -113,27 +119,23 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div>-->
 
                     </div>
                     <!--/tab-pane-->
                     <div class="tab-pane" id="messages">
 
                         <h2></h2>
-
-                        <ul class="list-group">
-                            <li class="list-group-item text-muted initialism ">Inbox</li>
-                            <li class="list-group-item text-right"><a href="#" class="pull-left">Here is your a link to the latest summary report from the..</a>                                2.13.2014</li>
-                            <li class="list-group-item text-right"><a href="#" class="pull-left">Hi Joe, There has been a request on your account since that was..</a>                                2.11.2014</li>
-                            <li class="list-group-item text-right"><a href="#" class="pull-left">Nullam sapien massaortor. A lobortis vitae, condimentum justo...</a>                                2.11.2014</li>
-                            <li class="list-group-item text-right"><a href="#" class="pull-left">Thllam sapien massaortor. A lobortis vitae, condimentum justo...</a>                                2.11.2014</li>
-                            <li class="list-group-item text-right"><a href="#" class="pull-left">Wesm sapien massaortor. A lobortis vitae, condimentum justo...</a>                                2.11.2014</li>
-                            <li class="list-group-item text-right"><a href="#" class="pull-left">For therepien massaortor. A lobortis vitae, condimentum justo...</a>                                2.11.2014</li>
-                            <li class="list-group-item text-right"><a href="#" class="pull-left">Also we, havesapien massaortor. A lobortis vitae, condimentum justo...</a>                                2.11.2014</li>
-                            <li class="list-group-item text-right"><a href="#" class="pull-left">Swedish chef is assaortor. A lobortis vitae, condimentum justo...</a>                                2.11.2014</li>
-
-                        </ul>
-
+                        <div ng-if="profile.activeThreads.length > 0">
+                            <ul class="list-group">
+                                <li class="list-group-item text-muted initialism ">Inbox</li>
+                                <li class="list-group-item text-right" ng-repeat="thread in profile.activeThreads"><a ui-sref="itemDetails({ itemId: thread.itemId })" class="pull-left">{{thread.messages[thread.messages.length - 1].message}}</a>                                    {{thread.messages[thread.messages.length - 1].timestamp | amDateFormat:'MM.DD.YY@hh:mm
+                                    a'}}</li>
+                            </ul>
+                        </div>
+                        <div ng-if="profile.activeThreads.length == 0">
+                            <i>No messages to show here</i>
+                        </div>
                     </div>
                     <!--/tab-pane-->
                     <div class="tab-pane" id="settings">

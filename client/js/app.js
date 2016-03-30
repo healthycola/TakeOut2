@@ -199,6 +199,12 @@ angular.module('takeout').directive('profile', function () {
                         { $and: [ { "readByUser" : false }, { user: Meteor.user()._id } ] }, 
                         { $and: [ { "readByOwner": false }, { ownerId: Meteor.user()._id } ] } 
                         ]}).count();
+                },
+                activeThreads: () => {
+                    return Threads.find({ $or: [ 
+                        { $and: [ { "readByUser" : false }, { user: Meteor.user()._id } ] }, 
+                        { $and: [ { "readByOwner": false }, { ownerId: Meteor.user()._id } ] } 
+                        ]}, { sort: { lastUpdatedTimestamp: -1 } });
                 }
             });
 
@@ -404,14 +410,16 @@ angular.module('takeout').directive('itemdetails', function () {
                     if (!thread) {
                         isThreadFound = false;
                         // create a thread
-                        var newThred = {};
-                        newThred.ownerId = item.owner;
-                        newThred.user = user;
-                        newThred.messages = [];
-                        newThred.isOpen = true;
-                        newThred.readByUser = true;
-                        newThred.readByOwner = false;
-                        thread = newThred;
+                        var newThread = {};
+                        newThread.ownerId = item.owner;
+                        newThread.user = user;
+                        newThread.messages = [];
+                        newThread.isOpen = true;
+                        newThread.readByUser = true;
+                        newThread.readByOwner = false;
+                        newThread.lastUpdatedTimestamp = new Date();
+                        newThread.itemId = item._id 
+                        thread = newThread;
                     }
                     console.log(thread);
                     message.author = Meteor.user()._id;
@@ -438,7 +446,7 @@ angular.module('takeout').directive('itemdetails', function () {
                     else {
                         var readByUser = item.owner != Meteor.user()._id;
                         var readByOwner = item.owner == Meteor.user()._id;
-                        Threads.update({ _id: thread._id }, { $push: { "messages": message }, $set: { "readByUser": readByUser, "readByOwner": readByOwner } });
+                        Threads.update({ _id: thread._id }, { $push: { "messages": message }, $set: { "readByUser": readByUser, "readByOwner": readByOwner, "lastUpdatedTimestamp": new Date()} });
                     }
                 }
                 
