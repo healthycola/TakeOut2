@@ -400,6 +400,18 @@ angular.module('takeout').directive('itemdetails', function () {
                 }
             }
             
+            this.markAsPickedUp = (item) => {
+                // on pick up add a new pickup field
+                Meteor.call('markAsPickedUp', this.item._id, this.user, (error) => {
+                    if (error) {
+                        console.log('Oops, unable to update!');
+                    }
+                    else {
+                        console.log('Updated!');
+                    }
+                });
+            }
+            
             this.addToThread = (item) => {
                 var addMessageToThread = function (item, message, user) {
                     console.log(item);

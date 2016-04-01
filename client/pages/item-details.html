@@ -6,6 +6,7 @@
         <div class="row">
             <div class="col-md-7">
                 <div class="itemDetail">
+                    <div class="itemDetailRow" ng-show="itemdetails.item.userWhoPickedUp != null"><strong>PICKED UP</strong></div>
                     <div class="itemDetailRow"><strong>Description:</strong> {{itemdetails.item.description}}</div>
                     <div class="itemDetailRow"><strong>Posted:</strong> {{itemdetails.item.postedDate | amCalendar}}</div>
                     <div class="itemDetailRow" ng-switch on="{{itemdetails.isExpired(itemdetails.item).toString()}}">
@@ -37,6 +38,11 @@
                                     <select class="form-control" ng-model="itemdetails.user">
                                         <option ng-repeat="thread in itemdetails.getAllThreads" value="{{thread.user}}">{{itemdetails.getUserById(thread.user).profile.firstName}} {{thread.readByOwner}}</option>
                                     </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group" ng-show="itemdetails.user != itemdetails.item.owner">
+                                        <button id="pickedUpButton" type="button" class="btn" ng-click="itemdetails.markAsPickedUp(itemdetails.item)" uib-tooltip="Mark as Picked Up"><i class="glyphicon glyphicon-ok-sign"></i>Picked Up</button>
+                                    </div>
                                 </div>
                             </div>
                             <br/>
