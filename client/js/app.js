@@ -9,6 +9,20 @@ angular.module('takeout', [
     'ngAnimate'
 ]);
 
+angular
+.module('takeout')
+.filter('range', function() {
+    return function(input, total) {
+        total = parseInt(total, 10);
+
+        for(var i=0; i<total; ++i) {
+            input.push(i);
+        }
+    
+        return input;
+    };
+});
+
 angular.module('takeout').directive('home', function () {
     return {
         restrict: 'E',
@@ -412,8 +426,7 @@ angular.module('takeout').directive('itemdetails', function () {
                 });
             }
             
-            this.addToThread = (item) => {
-                var addMessageToThread = function (item, message, user) {
+            var addMessageToThread = function (item, message, user) {
                     console.log(item);
                     console.log(message);
                     var thread = Threads.findOne({ _id: { $in: item.threads }, ownerId: item.owner, user: user });
@@ -462,6 +475,11 @@ angular.module('takeout').directive('itemdetails', function () {
                     }
                 }
                 
+            this.requestItem = (item) => {
+                addMessageToThread(item, { "message" : "Hey I'm interested in this item!" }, this.user);
+            }
+            
+            this.addToThread = (item) => {
                 // Look if there is already a thread between this user and the onwer for this item
                 console.log(this.msgToAdd);
                 if (!item.threads) {
@@ -478,6 +496,111 @@ angular.module('takeout').directive('itemdetails', function () {
                     addMessageToThread(item, this.msgToAdd, this.user);
                     this.msgToAdd = { "message": "" };
                 }
+            }
+        }
+    }
+});
+
+angular.module('takeout').directive('userinfo', function () {
+    return {
+        restrict: 'E',
+        templateUrl: 'client/pages/userInfo.html',
+        controllerAs: 'userinfo',
+        controller: function ($scope, $reactive, $stateParams, $filter) {
+            $reactive(this).attach($scope);
+            
+            
+            this.userId = $stateParams.userId;
+            this.testimonialText = "";
+            this.rate = 4;
+            this.max = 5;
+            this.isReadonly = false;
+            this.hoveringOver = function (value) {
+                this.overStar = value;
+            };
+            
+            this.helpers({
+                user: () => {
+                    return Meteor.users.findOne({ _id: this.userId });
+                },
+                itemsDonated: () => {
+                    return Items.find({ owner: this.userId });
+                },
+                itemsPickedUp: () => {
+                    var user = Meteor.users.findOne({ _id: this.userId });
+                    return Items.find( { _id: { $in :  user.profile.itemsPickedUpList } });
+                },
+                testimonials: () => {
+                    return Testimonials.find({ownerId: this.userId });
+                },
+                averageRating: () => {
+                    var runningTotal = 0;
+                    var totalNumber = 0;
+                    Testimonials.find({ownerId: this.userId }).forEach(function (testimonial) {
+                        runningTotal += testimonial.rating;
+                        totalNumber++;
+                    });
+                    
+                    if (totalNumber == 0) {
+                        return 0;
+                    }
+                    else {
+                        return runningTotal / totalNumber;
+                    }
+                },
+                myTestimonial: () => {
+                    var myTestimonial = Testimonials.findOne({ownerId: this.userId, user: Meteor.user()._id });
+                    if (myTestimonial) {
+                        this.rate = myTestimonial.rating;
+                        this.testimonialText = myTestimonial.message;
+                    }
+                    else {
+                        this.rate = 3;
+                        this.testimonialText = "I thought they were great!";
+                    }
+                }
+            });
+            
+            this.isExpired = (item) => {
+                return IsExpired(item);
+            };
+            
+            this.userName = (userId) => {
+                var foundUser = Meteor.users.findOne({ _id: userId });
+                return foundUser.profile.firstName + " " + foundUser.profile.lastName;
+            };
+            
+            this.addTestiminial = () => {
+                var testimonialsForThisUser = Testimonials.findOne({ownerId: this.userId, user : Meteor.user()._id });
+                
+                var newTestimonial = testimonialsForThisUser == null;
+                
+                var testimonial = {};
+                    testimonial.ownerId = this.userId;
+                    testimonial.user = Meteor.user()._id;
+                    testimonial.rating = this.rate;
+                    testimonial.message = this.testimonialText;
+                    testimonial.date = new Date();
+                    
+                if (newTestimonial) {
+                    Testimonials.insert(testimonial, function(err, addedTestimonial) {
+                        if (err) {
+                            console.log(err);
+                        };
+                    });
+                }
+                else {
+                    console.log(testimonial);
+                    Testimonials.update(testimonialsForThisUser._id, { $set: testimonial }, function(err, updatedDocs) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        
+                        console.log(updatedDocs);
+                    });
+                }
+                
+                this.testimonialText = "";
             }
         }
     }

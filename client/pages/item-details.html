@@ -36,7 +36,7 @@
                                 <div class="col-md-2">Requests</div>
                                 <div class="col-md-8">
                                     <select class="form-control" ng-model="itemdetails.user">
-                                        <option ng-repeat="thread in itemdetails.getAllThreads" value="{{thread.user}}">{{itemdetails.getUserById(thread.user).profile.firstName}} {{thread.readByOwner}}</option>
+                                        <option ng-repeat="thread in itemdetails.getAllThreads" value="{{thread.user}}">{{itemdetails.getUserById(thread.user).profile.firstName}} {{itemdetails.getUserById(thread.user).profile.lastName}}</option>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
@@ -47,6 +47,8 @@
                             </div>
                             <br/>
                         </div>
+                    </div>
+                    <div ng-show="itemdetails.thread != null">
                         <div class="row">
                             <div class="col-md-1 col-md-offset-11">
                                 <div class="form-group">
@@ -64,29 +66,34 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div ng-show="itemdetails.item.threads == null">
-                        No conversation here
-                    </div>
-                    <div ng-show="itemdetails.user != itemdetails.item.owner">
-                        <form class="form-horizontal" id="addMessage" name="addMessageToThread">
-                            <div class="row">
-                                <label for="message" class="control-label">Your Message</label>
-                            </div>
-                            <div clas="row">
-                                <div class="col-md-10">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" name="message" placeholder="Item Name " required ng-model="itemdetails.msgToAdd.message">
+                        <div ng-show="itemdetails.user != itemdetails.item.owner">
+                            <form class="form-horizontal" id="addMessage" name="addMessageToThread">
+                                <div class="row">
+                                    <label for="message" class="control-label">Your Message</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="message" placeholder="Item Name " required ng-model="itemdetails.msgToAdd.message">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <button id="addMessageSubmitButton" type="submit" class="btn" ng-click="itemdetails.addToThread(itemdetails.item)" ng-disabled="addMessageToThread.$invalid">Send</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <button id="addMessageSubmitButton" type="submit" class="btn" ng-click="itemdetails.addToThread(itemdetails.item)" ng-disabled="addMessageToThread.$invalid">Send</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
+                    <div ng-show="itemdetails.thread == null && itemdetails.user != itemdetails.item.owner">
+                        <div class="col-md-4 col-md-offset-4">
+                            <div class="form-group">
+                                <button id="requestItemButton" type="submit" class="btn" ng-click="itemdetails.requestItem(itemdetails.item)">Request Item</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

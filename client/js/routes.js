@@ -56,6 +56,13 @@ angular.module('takeout').config(function ($urlRouterProvider, $stateProvider, $
                 'nav': { template: '<navbar2></navbar2>' },
                 'main': { template: '<itemdetails></itemdetails>' }
             }
+        })
+        .state('userInfo', {
+            url: "/userInfo/:userId",
+            views: {
+                'nav': { template: '<navbar2></navbar2>' },
+                'main': { template: '<userinfo></userinfo>' }
+            }
         });
 
 

@@ -24,7 +24,7 @@
                     <td>{{item.description}}</td>
                     <td>{{item.pickup.fromDate | amDateFormat:'dddd, MMMM Do YYYY'}} to
                         {{item.pickup.toDate | amDateFormat:'dddd, MMMM Do YYYY'}}</td>
-                    <td>{{itemslist.getUserById(item.owner).profile.firstName}}</td>
+                    <td><a ui-sref="userInfo({ userId: item.owner })">{{itemslist.getUserById(item.owner).profile.firstName}}</a></td>
                 </tr>
             </tbody>
         </table>
