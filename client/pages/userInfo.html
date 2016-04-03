@@ -155,7 +155,7 @@
                                         <div class="col-md-2">
                                             <span ng-repeat="n in [] | range:testimonial.rating"><i class="glyphicon glyphicon-star"></i></span><span ng-repeat="n in [] | range:5-testimonial.rating"><i class="glyphicon glyphicon-star-empty"></i></span>
                                             <br/>
-                                            <i>{{userinfo.userName(testimonial.user)}}</i>
+                                            <i><a ui-sref="userInfo({ userId: testimonial.user })">{{userinfo.userName(testimonial.user)}}</a></i>
                                         </div>
                                         <div class="col-md-10">
                                             {{testimonial.message}}

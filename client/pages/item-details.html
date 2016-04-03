@@ -1,7 +1,7 @@
 <div class="container mainBody">
     <div class="container">
         <h3 small>{{itemdetails.item.name}}</h3>
-        <div class="postedBy">Posted <i>by</i> {{itemdetails.getUserById(itemdetails.item.owner).profile.firstName}}</div>
+        <div class="postedBy">Posted <i>by</i> <a ui-sref="userInfo({ userId: itemdetails.item.owner })">{{itemdetails.getUserById(itemdetails.item.owner).profile.firstName}}</a></div>
         <br/>
         <div class="row">
             <div class="col-md-7">
